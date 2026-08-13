@@ -39,3 +39,4 @@ def save_measurment(station_uuid: str ,station_name: str, wasserstand: int, zeit
     db.commit()
     db.close()
     print(f" Gespeichert {station_name} mit {station_uuid}-> {wasserstand}cm {zeitstempel}")
+    
