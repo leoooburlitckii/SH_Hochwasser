@@ -11,8 +11,23 @@ def fetch_and_store():
         name = station["name"]
 
         url = f"https://pegelonline.wsv.de/webservices/rest-api/v2/stations/{uuid}/W/currentmeasurement.json"
+        url_mnw_mhw = f"https://pegelonline.wsv.de/webservices/rest-api/v2/stations/{uuid}/W.json?includeCharacteristicValues=true"
 
+        mnw = None
+        mhw = None
+        
         try:
+            response_mnw_mhw = requests.get(url_mnw_mhw, timeout = 10)
+            if response_mnw_mhw.status_code == 200:
+                data_mnw_mhw = response_mnw_mhw.json()
+                for thing in data_mnw_mhw["characteristicValues"]:
+                    if thing["shortname"] == "MNW":
+                        mnw = thing["value"]
+                    if thing["shortname"] == "MHW":
+                        mhw = thing["value"]
+            else:
+                print(f"Fehler bei Station im Durchlauf zu MNW und MHW {name }Statuscode {response_mnw_mhw.status_code}")
+
             response = requests.get(url, timeout=10)
             if response.status_code == 200:
                 data = response.json()
@@ -20,7 +35,9 @@ def fetch_and_store():
                     station_uuid=uuid,
                     station_name=name,
                     wasserstand=data["value"],
-                    zeitstempel=data["timestamp"]
+                    zeitstempel=data["timestamp"],
+                    mnw=mnw,
+                    mhw = mhw
                 )
             else:
                 print(f"Fehler bei Station {name }Statuscode {response.status_code}")
