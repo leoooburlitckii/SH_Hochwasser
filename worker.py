@@ -21,9 +21,9 @@ def fetch_and_store():
             if response_mnw_mhw.status_code == 200:
                 data_mnw_mhw = response_mnw_mhw.json()
                 for thing in data_mnw_mhw["characteristicValues"]:
-                    if thing["shortname"] == "MNW":
+                    if thing["shortname"] == "MNW" or thing["shortname"] == "MTnw":
                         mnw = thing["value"]
-                    if thing["shortname"] == "MHW":
+                    if thing["shortname"] == "MHW" or thing["shortname"] == "MThw":
                         mhw = thing["value"]
             else:
                 print(f"Fehler bei Station im Durchlauf zu MNW und MHW {name }Statuscode {response_mnw_mhw.status_code}")

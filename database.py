@@ -7,7 +7,7 @@ def init_db():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS messungen (
-        station_uuid TEXT NOT NULL,
+        station_uuid TEXT PRIMARY KEY,
         station_name TEXT NOT NULL,
         wasserstand INTEGER NOT NULL,
         zeitstempel TEXT NOT NULL,

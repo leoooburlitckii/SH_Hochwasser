@@ -3,8 +3,8 @@ import json
 
 # 1. Wir definieren die URL, die wir fragen wollen.
 # Das hier ist die URL für die aktuelle Messung am Pegel "LÜBECK-BAUHOF" (der ist direkt in der Altstadt)
-url = "https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/f4f9f7fb-eeff-46dc-9727-04d8aa56240a/W/currentmeasurement.json"
-#url = "https://pegelonline.wsv.de/webservices/rest-api/v2/stations/f4f9f7fb-eeff-46dc-9727-04d8aa56240a/W.json?includeCharacteristicValues=true"
+#url = "https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/f4f9f7fb-eeff-46dc-9727-04d8aa56240a/W/currentmeasurement.json"
+url = "https://pegelonline.wsv.de/webservices/rest-api/v2/stations/f4f9f7fb-eeff-46dc-9727-04d8aa56240a/W.json?includeCharacteristicValues=true"
 # 2. Wir schicken unseren Kellner (requests) los, um die Daten zu holen
 antwort = requests.get(url)
 
