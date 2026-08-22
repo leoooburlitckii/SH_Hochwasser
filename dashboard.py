@@ -46,7 +46,7 @@ def print_dashboard():
     """
     print(karte)
     # Header: Exakt abgestimmte Breiten (NR=4, STATION=24, WASSERSTAND=12)
-    print(f"{'NR':<4}   | {'STATION':<24} | {'WASSERSTAND':<12} | {'ZEITSTEMPEL'}")
+    print(f"{'NR':<4}   | {'STATION':<24} | {'WASSERSTAND':<11} | {'ZEITSTEMPEL'}")
     print("-" * 78)
     print(f"Farben: {YELLOW}[Gelb = Niedrigwasser]{WHITE}, {GREEN}[Grün = Normal]{WHITE}, {RED}[Rot = Hochwasser]{WHITE}")
     print("-" * 78)

@@ -2,43 +2,43 @@ STATIONEN = [
     {
         "name": "LÜBECK-BAUHOF",
         "uuid" : "f4f9f7fb-eeff-46dc-9727-04d8aa56240a",
-        "row" : 1,
-        "col": 1
+        "row" : 21,
+        "col": 56
     },
 
     {
         "name": "TRAVEMÜNDE",
         "uuid" : "c7383149-1f77-430d-8bef-c5667be3846b",
-        "row" : 1,
-        "col": 1
+        "row" : 20,
+        "col": 57
     },
 
     {
         "name": "LIST AUF SYLT",
         "uuid" : "5e92d73f-e4ea-42c1-9f98-91536c17cdff",
-        "row" : 1,
-        "col": 1
+        "row" : 0,
+        "col": 2
     },
 
     {
         "name": "HÖRNUM",
         "uuid" : "733755fd-628f-4130-a694-aaba340531ba",
-        "row" : 1,
-        "col": 1
+        "row" : 2,
+        "col": 2
     },
 
     {
         "name": "WITTDÜN",
         "uuid" : "9c4c11f2-0548-4555-beac-ecfd36f9bd74",
-        "row" : 1,
-        "col": 1
+        "row" : 5,
+        "col": 2
     },
 
     {
         "name": "PELLWORM ANLEGER",
         "uuid" : "2852b9ab-d30e-4d04-ae06-3e946f48a0b1",
-        "row" : 1,
-        "col": 1
+        "row" : 8,
+        "col": 3
     },
 
     {
