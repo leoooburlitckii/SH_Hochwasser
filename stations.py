@@ -358,13 +358,6 @@ STATIONEN = [
     },
 
     {
-        "name": "DONNERSCHLEUSE OP",
-        "uuid" : "45634232-36ac-416c-806d-5f64201dae2c",
-        "row" : 24,
-        "col": 54
-    },
-
-    {
         "name": "MÖLLN",
         "uuid" : "46644438-83d6-4da8-a2a1-1deb2cb67561",
         "row" : 25,
