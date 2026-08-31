@@ -1,90 +1,16 @@
 [
     {
-        "name": "TRAVEMÜNDE",
-        "uuid" : "c7383149-1f77-430d-8bef-c5667be3846b",
-        "row" : 20,
-        "col": 57,
-        "symbol": "1"
-    },
-
-    {
+        "symbol": "L",
         "name": "LÜBECK-BAUHOF",
-        "uuid" : "f4f9f7fb-eeff-46dc-9727-04d8aa56240a",
-        "row" : 21,
-        "col": 56,
-        "symbol": "2"
+        "uuid": "f4f9f7fb-eeff-46dc-9727-04d8aa56240a",
+        "row": 21,
+        "col": 56
     },
-
     {
-        "name": "LIST AUF SYLT",
-        "uuid" : "5e92d73f-e4ea-42c1-9f98-91536c17cdff",
-        "row" : 0,
-        "col": 2,
-        "symbol": "2"
-    },
-
-    {
-        "name": "HUSUM",
-        "uuid" : "e114aeec-c8d9-4d20-8fe1-8822058cb38b",
-        "row" : 9,
-        "col": 16,
-        "symbol": "H"
-    },
-
-    {
-        "name": "FLENSBURG",
-        "uuid" : "9e19c411-f728-4a43-a057-39d4155c71cc",
-        "row" : 4,
-        "col": 27,
-        "symbol": "F"
-    },
-
-    {
-        "name": "SCHLESWIG",
-        "uuid" : "09370c05-1041-4395-a5d4-b8db6e59c4c8",
-        "row" : 8,
-        "col": 32,
-        "symbol": "S"
-    },
-
-    {
-        "name": "ECKERNFÖRDE",
-        "uuid" : "1faa9b2c-c269-4662-af70-ef11da27cc1c",
-        "row" : 9,
-        "col": 36,
-        "symbol": "E"
-    },
-
-    {
-        "name": "KIEL-HOLTENAU",
-        "uuid" : "3ad4013f-644b-47f5-a641-44b332bfecb2",
-        "row" : 11,
-        "col": 44,
-        "symbol": "K"
-    },
-
-     {
-        "name": "ITZEHOE HAFEN",
-        "uuid" : "d863cbc3-5e5e-4095-855c-026f0850dd58",
-        "row" : 18,
-        "col": 31,
-        "symbol": "I"
-    },
-
-    {
-        "name": "GEESTHACHT",
-        "uuid" : "44f7e955-c97d-45c8-9ed7-19406806fb4c",
-        "row" : 27,
-        "col": 49,
-        "symbol": "G"
-    },
-
-    {
-        "name": "MÖLLN",
-        "uuid" : "46644438-83d6-4da8-a2a1-1deb2cb67561",
-        "row" : 25,
-        "col": 54,
-        "symbol": "M"
+        "symbol": "T",
+        "name": "TRAVEMÜNDE",
+        "uuid": "c7383149-1f77-430d-8bef-c5667be3846b",
+        "row": 20,
+        "col": 57
     }
-   
 ]
