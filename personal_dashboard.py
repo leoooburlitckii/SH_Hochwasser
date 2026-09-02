@@ -2,10 +2,35 @@ from BASE_MAP import BASE_MAP
 import json
 from database import get_latest_measurment
 from colors_for_terminal import YELLOW, WHITE, RED, GREEN
+from config_manager import configure_stations, CONFIG_FILE
+import os
+import time
 
+# hat der user json datei? wenn nicht starte config_manager.py
+def get_user_stations():
+    if not os.path.exists(CONFIG_FILE):
+        print("Keine user.config.json gefunden.")
+        print("Starte Einrichtung")
+        time.sleep(1)
+
+        configure_stations()
+
+        #Falls Konfigurierung sofort abgebrochen wurde
+        if not os.path.exists(CONFIG_FILE):
+            print("\n Es wurde keine Konfiguration erstellt. Abbruch.")
+            return None
+
+    with open(CONFIG_FILE, "r", encoding="utf-8") as json_file:
+        return json.load(json_file)
 
 def print_personal_dashboard():
 
+    user_stations = get_user_stations()
+    if not user_stations:
+        return
+
+    #Terminal leeren
+    print("\033[2J\033[3J\033[H", end="")
     personal_map = BASE_MAP.copy()
 
     with open("user_config.json", "r") as json_file:

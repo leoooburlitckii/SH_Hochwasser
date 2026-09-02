@@ -15,6 +15,7 @@ def configure_stations():
     
     selected_list = []
     used_symbols = set()
+    used_stations = set()
 
     #Station wählen
     while True:
@@ -26,8 +27,12 @@ def configure_stations():
             print("Ungültige Eingabe, wiederholen Sie")
             continue
 
+        
         idx = int(choice) -1
         st = STATIONEN[idx]
+        if st["uuid"] in used_stations:
+            print(f"{st['name']} wurde bereits hinzugefügt")
+            continue
 
         #Symbol wählen
         while True:
@@ -40,6 +45,7 @@ def configure_stations():
                 break
 
         used_symbols.add(symbol)
+        used_stations.add(st["uuid"])
 
         selected_list.append({
             "symbol" :symbol,
