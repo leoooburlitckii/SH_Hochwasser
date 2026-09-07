@@ -1,7 +1,7 @@
 import json
-from stations import STATIONEN
+from src.stations import STATIONEN
 
-CONFIG_FILE = "user_config.json"
+CONFIG_FILE = "data/user_config.json"
 
 def configure_stations():
     print("=" * 60)

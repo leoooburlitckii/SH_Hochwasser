@@ -1,7 +1,7 @@
-from BASE_MAP import BASE_MAP
+from src.BASE_MAP import BASE_MAP
 import json
-from database import get_latest_measurment
-from colors_for_terminal import YELLOW, WHITE, RED, GREEN
+from src.database import get_latest_measurment
+from src.colors_for_terminal import YELLOW, WHITE, RED, GREEN
 from config_manager import configure_stations, CONFIG_FILE
 import os
 import time
@@ -33,7 +33,7 @@ def print_personal_dashboard():
     print("\033[2J\033[3J\033[H", end="")
     personal_map = BASE_MAP.copy()
 
-    with open("user_config.json", "r") as json_file:
+    with open(CONFIG_FILE, "r") as json_file:
         selected_stations = json.load(json_file)
 
     for station in selected_stations:

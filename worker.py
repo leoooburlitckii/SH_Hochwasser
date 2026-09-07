@@ -1,7 +1,7 @@
 import requests
 import time
-from database import init_db, save_measurment
-from stations import STATIONEN
+from src.database import init_db, save_measurment
+from src.stations import STATIONEN
 
 
 def fetch_and_store():

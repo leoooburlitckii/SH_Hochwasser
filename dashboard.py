@@ -1,6 +1,6 @@
-from database import get_latest_measurment
-from hotspots import HOTSPOTS
-from colors_for_terminal import YELLOW, WHITE, RED, GREEN
+from src.database import get_latest_measurment
+from src.hotspots import HOTSPOTS
+from src.colors_for_terminal import YELLOW, WHITE, RED, GREEN
 
 
 def print_dashboard():
