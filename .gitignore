@@ -220,3 +220,5 @@ __marimo__/
 user_config.json
 *.db
 test-api.py
+dockerfile_vorher_bochka.txt
+docker_compose_bochka.txt
