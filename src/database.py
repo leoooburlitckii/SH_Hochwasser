@@ -1,75 +1,81 @@
-import sqlite3
+from settings import settings
+from sqlalchemy import create_engine, String, Float, Integer, BigInteger, select
+from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
+
+engine = create_engine(settings.DATABASE_URL, echo=False)
+SessionLocal = sessionmaker(bind=engine)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class Messung(Base):
+    __tablename__= "messungen"
+
+    station_uuid: Mapped[str] = mapped_column(String, primary_key=True)
+    station_name: Mapped[str] = mapped_column(String, nullable=False)
+    wasserstand: Mapped[int] = mapped_column(Integer, nullable=False)
+    zeitstempel: Mapped[str] = mapped_column(String, nullable=False)
+    mnw: Mapped[float | None] = mapped_column(Float, nullable=True)
+    mhw: Mapped[float | None] = mapped_column(Float, nullable=True)
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    station_name: Mapped[str] = mapped_column(String, nullable=False)
+    schwellenwert: Mapped[str] = mapped_column(String, nullable=False)
 
 def init_db():
+    Base.metadata.create_all(bind=engine)
+    print("PostgreSQL: Таблицы успешно созданы.")
 
-    db = sqlite3.connect('sh_hochwasser.db')
-    cursor = db.cursor()
+def save_measurment(
+    station_uuid: str,
+    station_name: str,
+    wasserstand: int,
+    zeitstempel: str,
+    mnw: float | None = None,
+    mhw: float | None = None,
+):
+    with SessionLocal() as session:
+        messung = Messung(
+            station_uuid=station_uuid,
+            station_name=station_name,
+            wasserstand=wasserstand,
+            zeitstempel=zeitstempel,
+            mnw=mnw,
+            mhw=mhw,
+        )
+        
+        session.merge(messung)
+        session.commit()
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS messungen (
-        station_uuid TEXT PRIMARY KEY,
-        station_name TEXT NOT NULL,
-        wasserstand INTEGER NOT NULL,
-        zeitstempel TEXT NOT NULL,
-        MNW REAL,
-        MHW REAL
-    )
-    """)
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL,
-        station_name TEXT NOT NULL,
-        schwellenwert TEXT NOT NULL
-    )
-    """)
-
-    db.commit()
-    db.close()
-
-def save_measurment(station_uuid: str ,station_name: str, wasserstand: int, zeitstempel: str, mnw: float=None, mhw: float =None):
-
-    db = sqlite3.connect('sh_hochwasser.db')
-    cursor = db.cursor()
-
-    cursor.execute("""
-        INSERT OR REPLACE INTO messungen (station_uuid, station_name, wasserstand, zeitstempel, MNW, MHW)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (station_uuid, station_name, wasserstand, zeitstempel, mnw, mhw))
-
-    db.commit()
-    db.close()
-    print(f" Gespeichert {station_name} mit {station_uuid}-> {wasserstand}cm {zeitstempel}, {mnw} cm und {mhw} cm")
+    print(f"Gespeichert {station_name} mit {station_uuid}-> {wasserstand}cm {zeitstempel}, {mnw} cm und {mhw} cm")
 
 
-def get_latest_measurment(station_uuid: str ):
+def get_latest_measurment(station_uuid: str):
+    
+    with SessionLocal() as session:
+        stmt = select(Messung).where(Messung.station_uuid == station_uuid)
+        result = session.scalar(stmt)
 
-    db = sqlite3.connect('sh_hochwasser.db')
-    cursor = db.cursor()
+        if result:
+            return{
+                "name": result.station_name,
+                "wert": result.wasserstand,
+                "zeit": result.zeitstempel,
+                "mnw": result.mnw if result.mnw is not None else "--",
+                "mhw": result.mhw if result.mhw is not None else "--",
+            }
 
-    cursor.execute("""
-        SELECT station_name, wasserstand, zeitstempel, mnw, mhw
-        FROM messungen
-        WHERE station_uuid = ?
-    """, (station_uuid,))
-
-    result = cursor.fetchone()
-    db.close()
-
-    if result:
         return {
-            "name": result[0],
-            "wert": result[1],
-            "zeit": result[2],
-            "mnw": result[3],
-            "mhw": result[4]
-        }
-
-    return {
         "name": "Unbekannt",
         "wert": "--",
         "zeit": "--",
         "mnw": "--",
-        "mhw": "--"
+        "mhw": "--",
     }
