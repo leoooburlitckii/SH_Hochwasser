@@ -1,12 +1,13 @@
 import requests
 import time
-from src.database import init_db, save_measurment
+from src.database import init_db, save_measurment, get_all_stations
 from src.stations import STATIONEN
 
 
 def fetch_and_store():
     print("\n Update gestartet")
-    for station in STATIONEN:
+    stationen = get_all_stations()
+    for station in stationen:
         uuid = station["uuid"]
         name = station["name"]
 

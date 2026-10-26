@@ -97,7 +97,6 @@ def save_measurment(
 
     print(f"Gespeichert {station_name} mit {station_uuid}-> {wasserstand}cm {zeitstempel}")
 
-
 def get_latest_measurment(station_uuid: str):
     
     with SessionLocal() as session:
@@ -120,3 +119,13 @@ def get_latest_measurment(station_uuid: str):
         "mnw": "--",
         "mhw": "--",
     }
+
+def get_all_stations() -> list["Station"]:
+    with SessionLocal as session:
+        stmt = select(Station)
+        return stmt.scalars(stmt).all()
+
+def get_hotspots() -> list["Station"]:
+    with SessionLocal as session:
+        stmt = select(Station).where(Station.is_hotspot == True)
+        return stmt.scalars(stmt).all()
