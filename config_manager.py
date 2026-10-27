@@ -1,14 +1,15 @@
 import json
-from src.stations import STATIONEN
+from src.database import get_all_stations
 
 CONFIG_FILE = "data/user_config.json"
 
 def configure_stations():
     print("=" * 60)
 
+    stations = get_all_stations()
 
-    for idx, station in enumerate(STATIONEN, start=1):
-        print(f"[{idx:>2}] {station['name']:<30}", end="\n" if idx % 2 == 0 else "  ")
+    for idx, station in enumerate(stations, start=1):
+        print(f"[{idx:>2}] {station.name:<30}", end="\n" if idx % 2 == 0 else "  ")
     
     print("-" * 60)
     print("Wähle Stationen nacheinander aus. (Leere Eingabe zum Beenden)")
@@ -23,20 +24,20 @@ def configure_stations():
         if not choice:
             break
 
-        if not choice.isdigit() or not (1 <= int(choice) <= len(STATIONEN)):
+        if not choice.isdigit() or not (1 <= int(choice) <= len(stations)):
             print("Ungültige Eingabe, wiederholen Sie")
             continue
 
         
         idx = int(choice) -1
-        st = STATIONEN[idx]
-        if st["uuid"] in used_stations:
-            print(f"{st['name']} wurde bereits hinzugefügt")
+        st = stations[idx]
+        if st.uuid in used_stations:
+            print(f"{st.name} wurde bereits hinzugefügt")
             continue
 
         #Symbol wählen
         while True:
-            symbol = input(f"1 Zeichen Symbol für {st['name']} eingeben: ").strip()
+            symbol = input(f"1 Zeichen Symbol für {st.name} eingeben: ").strip()
             if len(symbol) != 1:
                 print("Ungültige Eingabe, Wiederholen Sie")
             elif symbol in used_symbols:
@@ -45,18 +46,17 @@ def configure_stations():
                 break
 
         used_symbols.add(symbol)
-        used_stations.add(st["uuid"])
+        used_stations.add(st.uuid)
 
         selected_list.append({
             "symbol" :symbol,
-            "name": st["name"],
-            "uuid": st["uuid"],
-            "row": st["row"],
-            "col": st["col"]
-            
+            "name": st.name,
+            "uuid": st.uuid,
+            "row": st.row,
+            "col": st.col
         })
 
-        print(f"Station {st['name']} mit Symbol {symbol} hinzugefügt")
+        print(f"Station {st.name} mit Symbol {symbol} hinzugefügt")
 
     if selected_list:
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
