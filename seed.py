@@ -1,7 +1,7 @@
 import requests
 from src.hotspots import HOTSPOTS
 from src.stations import STATIONEN
-from database import init_db, save_station
+from src.database import init_db, save_station
 
 def seed_stations():
 

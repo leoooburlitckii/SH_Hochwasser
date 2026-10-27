@@ -121,11 +121,11 @@ def get_latest_measurment(station_uuid: str):
     }
 
 def get_all_stations() -> list["Station"]:
-    with SessionLocal as session:
+    with SessionLocal() as session:
         stmt = select(Station)
-        return stmt.scalars(stmt).all()
+        return session.scalars(stmt).all()
 
 def get_hotspots() -> list["Station"]:
-    with SessionLocal as session:
+    with SessionLocal() as session:
         stmt = select(Station).where(Station.is_hotspot == True)
-        return stmt.scalars(stmt).all()
+        return session.scalars(stmt).all()

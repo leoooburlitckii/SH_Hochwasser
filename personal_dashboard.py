@@ -33,10 +33,7 @@ def print_personal_dashboard():
     print("\033[2J\033[3J\033[H", end="")
     personal_map = BASE_MAP.copy()
 
-    with open(CONFIG_FILE, "r") as json_file:
-        selected_stations = json.load(json_file)
-
-    for station in selected_stations:
+    for station in user_stations:
 
         row = station["row"]
         col = station["col"]
@@ -59,7 +56,7 @@ def print_personal_dashboard():
     print(f"Farben: {YELLOW}[Gelb = Niedrigwasser]{WHITE}, {GREEN}[Grün = Normal]{WHITE}, {RED}[Rot = Hochwasser]{WHITE}")
     print("-" * 78)
     
-    for station in selected_stations:
+    for station in user_stations:
         daten = get_latest_measurment(station["uuid"])
         
         wert = daten['wert']
@@ -69,7 +66,7 @@ def print_personal_dashboard():
         
         farbcode = GREEN
         
-        if wert != "--" and mnw is not None and mhw is not None:
+        if wert != "--" and mnw != "--" and mhw != "--":
             if wert > mhw:
                 farbcode = RED 
             elif wert < mnw:

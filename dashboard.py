@@ -1,5 +1,5 @@
 from src.database import get_latest_measurment
-from src.hotspots import HOTSPOTS
+from src.database import get_hotspots
 from src.colors_for_terminal import YELLOW, WHITE, RED, GREEN
 
 
@@ -51,8 +51,10 @@ def print_dashboard():
     print(f"Farben: {YELLOW}[Gelb = Niedrigwasser]{WHITE}, {GREEN}[Grün = Normal]{WHITE}, {RED}[Rot = Hochwasser]{WHITE}")
     print("-" * 78)
 
-    for hotspot in HOTSPOTS:
-        daten = get_latest_measurment(hotspot["uuid"])
+    hotspots = get_hotspots()
+    
+    for idx, hotspot in enumerate(hotspots, start = 1):
+        daten = get_latest_measurment(hotspot.uuid)
 
         wert = daten['wert']
         zeit_str = daten['zeit']
@@ -61,7 +63,7 @@ def print_dashboard():
 
         farbcode = GREEN
 
-        if wert != "--" and mnw is not None and mhw is not None:
+        if wert != "--" and mnw != "--"  and mhw != "--" :
             if wert > mhw:
                 farbcode = RED 
             elif wert < mnw:
@@ -72,7 +74,7 @@ def print_dashboard():
 
         wert_str = f"{farbcode}{wert_text}{WHITE}"
 
-        print(f"{hotspot['nr']:<4}   | {hotspot['name']:<24} | {wert_str} | {zeit_str}")
+        print(f"{idx:<4}   | {hotspot.name:<24} | {wert_str} | {zeit_str}")
 
     print("=" * 78)
 
