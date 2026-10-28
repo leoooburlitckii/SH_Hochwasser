@@ -31,9 +31,9 @@ class Messung(Base):
     __tablename__= "messungen"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    station_uuid: Mapped[str] = mapped_column(ForeignKey("stationen.uuid"), primary_key=False)
+    station_uuid: Mapped[str] = mapped_column(ForeignKey("stationen.uuid"))
     wasserstand: Mapped[int] = mapped_column(Integer, nullable=False)
-    zeitstempel: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    zeitstempel: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False,)
     
     station: Mapped["Station"] = relationship(back_populates="messungen")
 
@@ -129,3 +129,43 @@ def get_hotspots() -> list["Station"]:
     with SessionLocal() as session:
         stmt = select(Station).where(Station.is_hotspot == True)
         return session.scalars(stmt).all()
+
+def get_measurments_for_graphs(station_uuid: str, start: datetime, to: datetime) -> tuple[list[datetime], list[int]]:
+    with SessionLocal() as session:
+        stmt = (
+            select(Messung).
+            where(Messung.station_uuid== station_uuid).
+            where(Messung.zeitstempel >= start).
+            where(Messung.zeitstempel <=to).
+            order_by(Messung.zeitstempel.asc())
+        )
+        
+        messungen = session.scalars(stmt).all()
+
+    if not messungen:
+        fallback_stmt = (
+            select(Messung).
+            where(Messung.station_uuid== station_uuid).
+            where(Messung.zeitstempel <start).
+            order_by(Messung.zeitstempel.desc()).
+            limit(1)
+        )
+
+        fallback = session.scalar(fallback_stmt)
+
+        if fallback:
+            messungen = fallback
+        else:
+            return ([], [] )
+
+
+    x_axis = []
+    y_axis = []
+    
+    for messung in messungen:
+        x_axis.append(messung.zeitstempel)
+        y_axis.append(messung.wasserstand)
+
+    return (x_axis, y_axis)
+
+
