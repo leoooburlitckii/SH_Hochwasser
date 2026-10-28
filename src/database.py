@@ -142,21 +142,21 @@ def get_measurments_for_graphs(station_uuid: str, start: datetime, to: datetime)
         
         messungen = session.scalars(stmt).all()
 
-    if not messungen:
-        fallback_stmt = (
-            select(Messung).
-            where(Messung.station_uuid== station_uuid).
-            where(Messung.zeitstempel <start).
-            order_by(Messung.zeitstempel.desc()).
-            limit(1)
-        )
+        if not messungen:
+            fallback_stmt = (
+                select(Messung).
+                where(Messung.station_uuid== station_uuid).
+                where(Messung.zeitstempel <start).
+                order_by(Messung.zeitstempel.desc()).
+                limit(1)
+            )
 
-        fallback = session.scalar(fallback_stmt)
+            fallback = session.scalar(fallback_stmt)
 
-        if fallback:
-            messungen = fallback
-        else:
-            return ([], [] )
+            if fallback:
+                messungen = [fallback]
+            else:
+                return ([], [] )
 
 
     x_axis = []
