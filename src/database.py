@@ -91,11 +91,30 @@ def save_measurment(
         stmt = stmt.on_conflict_do_nothing(
             constraint = "uq_station_zeit"
         )
-        
+
         session.execute(stmt)
         session.commit()
 
     print(f"Gespeichert {station_name} mit {station_uuid}-> {wasserstand}cm {zeitstempel}")
+
+def save_measurements_batch(station_uuid: str, measurements: list) -> int:
+    rows = []
+    for m in measurements:
+        rows.append({
+            "station_uuid": station_uuid,
+            "wasserstand": int(m["value"]),
+            "zeitstempel": m["zeitstempel"]
+        })
+
+    with SessionLocal() as session:
+        stmt = insert(Messung).values(rows)
+        stmt = stmt.on_conflict_do_nothing(
+            constraint = "uq_station_zeit"
+        )
+        session.execute(stmt)
+        session.commit()
+
+    return len(rows)
 
 def get_latest_measurment(station_uuid: str):
     
