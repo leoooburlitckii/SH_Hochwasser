@@ -1,4 +1,4 @@
-STATIONEN = [
+STATIONS = [
     {
         "name": "LÜBECK-BAUHOF",
         "uuid" : "f4f9f7fb-eeff-46dc-9727-04d8aa56240a",

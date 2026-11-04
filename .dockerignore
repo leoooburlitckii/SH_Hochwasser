@@ -1,0 +1,39 @@
+# Secrets: werden zur Laufzeit ueber env_file in docker-compose.yml gesetzt
+.env
+.envrc
+
+# DB-Backups und lokale Datenbanken
+*.dump
+*.db
+
+# Git-Verlauf
+.git
+.gitignore
+
+# Lokale virtuelle Umgebung (uv sync im Dockerfile baut eine eigene)
+.venv
+venv
+env
+
+# Python-Caches
+__pycache__/
+*.py[cod]
+.mypy_cache
+.ruff_cache
+.pytest_cache
+
+# Lokale Nutzerdaten und Entwicklungsdateien
+data/user_config.json
+utils_for_dev_only/
+test-api.py
+tests/
+
+# Docker-Dateien selbst werden im Image nicht gebraucht
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Dokumentation
+README.md
+LICENSE
+

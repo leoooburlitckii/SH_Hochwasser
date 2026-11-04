@@ -222,3 +222,6 @@ user_config.json
 test-api.py
 dockerfile_vorher_bochka.txt
 docker_compose_bochka.txt
+
+# DB backups (pg_dump)
+*.dump

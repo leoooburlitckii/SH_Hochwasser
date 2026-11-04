@@ -1,9 +1,9 @@
 from settings import settings
-from sqlalchemy import create_engine, String, Float, Integer, BigInteger, Boolean, select, ForeignKey, UniqueConstraint, DateTime 
+from sqlalchemy import create_engine, String, Float, Integer, BigInteger, Boolean, select, ForeignKey, UniqueConstraint, DateTime
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from sqlalchemy.dialects.postgresql import insert #ist so spezifisch weil jede Datenbank anders mit Duplikaten umgeht
+from sqlalchemy.dialects.postgresql import insert  #ist so spezifisch weil jede Datenbank anders mit Duplikaten umgeht
 
 engine = create_engine(settings.DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(bind=engine)
@@ -13,32 +13,32 @@ class Base(DeclarativeBase):
     pass
 
 class Station(Base):
-    __tablename__ = "stationen"
+    __tablename__ = "stations"
 
     uuid: Mapped[str] = mapped_column(String, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    mnw: Mapped[float | None] = mapped_column(Float, nullable=True)
-    mhw: Mapped[float | None] = mapped_column(Float, nullable=True)
+    mean_low_water: Mapped[float | None] = mapped_column(Float, nullable=True)   # Mittleres Niedrigwasser (MNW)
+    mean_high_water: Mapped[float | None] = mapped_column(Float, nullable=True)  # Mittleres Hochwasser (MHW)
 
     col: Mapped[int] = mapped_column(Integer, nullable=False)
     row: Mapped[int] = mapped_column(Integer, nullable=False)
 
     is_hotspot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    messungen: Mapped[list["Messung"]] = relationship(back_populates="station") # Anführungszeichnen hier sind forward reference
+    measurements: Mapped[list["Measurement"]] = relationship(back_populates="station")  # Anführungszeichen hier sind forward reference
 
-class Messung(Base):
-    __tablename__= "messungen"
+class Measurement(Base):
+    __tablename__ = "measurements"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    station_uuid: Mapped[str] = mapped_column(ForeignKey("stationen.uuid"), primary_key=False)
-    wasserstand: Mapped[int] = mapped_column(Integer, nullable=False)
-    zeitstempel: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    
-    station: Mapped["Station"] = relationship(back_populates="messungen")
+    station_uuid: Mapped[str] = mapped_column(ForeignKey("stations.uuid"), primary_key=False)
+    water_level: Mapped[int] = mapped_column(Integer, nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+    station: Mapped["Station"] = relationship(back_populates="measurements")
 
     __table_args__ = (
-        UniqueConstraint("station_uuid", "zeitstempel", name="uq_station_zeit"), #uq = Unique Contraint , komma muss vorkommen damit als Tuple erkennt
+        UniqueConstraint("station_uuid", "timestamp", name="uq_station_timestamp"),  # uq = Unique Constraint, Komma muss vorkommen damit es als Tuple erkannt wird
     )
 
 class User(Base):
@@ -47,7 +47,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     email: Mapped[str] = mapped_column(String, nullable=False)
     station_name: Mapped[str] = mapped_column(String, nullable=False)
-    schwellenwert: Mapped[str] = mapped_column(String, nullable=False)
+    threshold: Mapped[str] = mapped_column(String, nullable=False)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
@@ -55,8 +55,8 @@ def init_db():
 def save_station(
     uuid: str,
     name: str,
-    mnw: float| None,
-    mhw: float| None,
+    mean_low_water: float | None,
+    mean_high_water: float | None,
     col: int,
     row: int,
     is_hotspot: bool
@@ -65,45 +65,45 @@ def save_station(
         station = Station(
             uuid = uuid,
             name = name,
-            mnw = mnw,
-            mhw = mhw,
+            mean_low_water = mean_low_water,
+            mean_high_water = mean_high_water,
             col = col,
             row = row,
             is_hotspot = is_hotspot
         )
         session.merge(station)
         session.commit()
-    print(f"Gespeichert {name} mit uuid:{uuid}, mnw {mnw}, mhw {mhw}, col {col}, row {row}, hotspot {is_hotspot}")
-    
-def save_measurment(
+    print(f"Gespeichert {name} mit uuid:{uuid}, mnw {mean_low_water}, mhw {mean_high_water}, col {col}, row {row}, hotspot {is_hotspot}")
+
+def save_measurement(
     station_uuid: str,
     station_name: str,
-    wasserstand: int,
-    zeitstempel: datetime,
+    water_level: int,
+    timestamp: datetime,
 ):
     with SessionLocal() as session:
-        stmt = insert(Messung).values(
+        stmt = insert(Measurement).values(
             station_uuid=station_uuid,
-            wasserstand = wasserstand,
-            zeitstempel = zeitstempel
+            water_level = water_level,
+            timestamp = timestamp
         )
 
         stmt = stmt.on_conflict_do_nothing(
-            constraint = "uq_station_zeit"
+            constraint = "uq_station_timestamp"
         )
 
         session.execute(stmt)
         session.commit()
 
-    print(f"Gespeichert {station_name} mit {station_uuid}-> {wasserstand}cm {zeitstempel}")
+    print(f"Gespeichert {station_name} mit {station_uuid}-> {water_level}cm {timestamp}")
 
 def save_measurements_batch(station_uuid: str, measurements: list) -> int:
     rows = []
     for m in measurements:
         rows.append({
             "station_uuid": station_uuid,
-            "wasserstand": int(m["value"]),
-            "zeitstempel": m["zeitstempel"]
+            "water_level": int(m["value"]),
+            "timestamp": m["timestamp"]
         })
 
     # PostgreSQL driver allows max 65535 parameters per query.
@@ -113,36 +113,36 @@ def save_measurements_batch(station_uuid: str, measurements: list) -> int:
     with SessionLocal() as session:
         for start in range(0, len(rows), chunk_size):
             chunk = rows[start:start + chunk_size]
-            stmt = insert(Messung).values(chunk)
+            stmt = insert(Measurement).values(chunk)
             stmt = stmt.on_conflict_do_nothing(
-                constraint = "uq_station_zeit"
+                constraint = "uq_station_timestamp"
             )
             session.execute(stmt)
         session.commit()
 
     return len(rows)
 
-def get_latest_measurment(station_uuid: str):
-    
+def get_latest_measurement(station_uuid: str):
+
     with SessionLocal() as session:
-        stmt = select(Messung).where(Messung.station_uuid == station_uuid).order_by(Messung.zeitstempel.desc())
+        stmt = select(Measurement).where(Measurement.station_uuid == station_uuid).order_by(Measurement.timestamp.desc())
         result = session.scalar(stmt)
 
         if result:
             return{
                 "name": result.station.name,
-                "wert": result.wasserstand,
-                "zeit": result.zeitstempel,
-                "mnw": result.station.mnw if result.station.mnw is not None else "--",
-                "mhw": result.station.mhw if result.station.mhw is not None else "--",
+                "value": result.water_level,
+                "timestamp": result.timestamp,
+                "mean_low_water": result.station.mean_low_water if result.station.mean_low_water is not None else "--",
+                "mean_high_water": result.station.mean_high_water if result.station.mean_high_water is not None else "--",
             }
 
         return {
         "name": "Unbekannt",
-        "wert": "--",
-        "zeit": "--",
-        "mnw": "--",
-        "mhw": "--",
+        "value": "--",
+        "timestamp": "--",
+        "mean_low_water": "--",
+        "mean_high_water": "--",
     }
 
 def get_all_stations() -> list["Station"]:

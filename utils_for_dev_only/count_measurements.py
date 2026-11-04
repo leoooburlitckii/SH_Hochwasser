@@ -1,6 +1,6 @@
 import requests
 
-from src.stations import STATIONEN
+from src.stations import STATIONS
 
 BASE_URL = "https://pegelonline.wsv.de/webservices/rest-api/v2/stations"
 
@@ -16,7 +16,7 @@ def count_measurements(uuid: str) -> int:
 def main():
     total = 0
 
-    for station in STATIONEN:
+    for station in STATIONS:
         try:
             count = count_measurements(station["uuid"])
         except requests.RequestException as e:
@@ -26,7 +26,7 @@ def main():
         total += count
         print(f"{station['name']}: {count} Messungen")
 
-    print(f"\nStationen: {len(STATIONEN)}, Messungen insgesamt: {total}")
+    print(f"\nStationen: {len(STATIONS)}, Messungen insgesamt: {total}")
 
 
 if __name__ == "__main__":

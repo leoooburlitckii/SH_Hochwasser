@@ -6,8 +6,8 @@ from datetime import datetime
 
 def fetch_and_store():
     print("\nUpdate gestartet")
-    stationen = get_all_stations()
-    for station in stationen:
+    stations = get_all_stations()
+    for station in stations:
         uuid = station.uuid
         name = station.name
 
@@ -28,7 +28,7 @@ def fetch_and_store():
                     parsed_datetime = datetime.fromisoformat(measurement["timestamp"])
                     valid_measurements.append({
                         "value": measurement["value"],
-                        "zeitstempel": parsed_datetime
+                        "timestamp": parsed_datetime
                     })
                 except (ValueError, KeyError):
                     continue

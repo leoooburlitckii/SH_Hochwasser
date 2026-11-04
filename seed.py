@@ -1,6 +1,6 @@
 import requests
 from src.hotspots import HOTSPOTS
-from src.stations import STATIONEN
+from src.stations import STATIONS
 from src.database import init_db, save_station
 
 def seed_stations():
@@ -12,30 +12,30 @@ def seed_stations():
     for hotspot in HOTSPOTS:
         hotspots_uuid.add(hotspot["uuid"])
 
-    for station in STATIONEN:
+    for station in STATIONS:
         uuid = station["uuid"]
         name = station["name"]
         row = station["row"]
         col = station["col"]
 
-        mhw = None
-        mnw = None
+        mean_high_water = None
+        mean_low_water = None
 
         is_hotspot = uuid in hotspots_uuid 
 
-        url_mnw_mhw = f"https://pegelonline.wsv.de/webservices/rest-api/v2/stations/{uuid}/W.json?includeCharacteristicValues=true"
+        url_characteristics = f"https://pegelonline.wsv.de/webservices/rest-api/v2/stations/{uuid}/W.json?includeCharacteristicValues=true"
 
         try:          
-            response_mnw_mhw = requests.get(url_mnw_mhw, timeout = 10)
-            if response_mnw_mhw.status_code == 200:
-                data_mnw_mhw = response_mnw_mhw.json()
-                for thing in data_mnw_mhw["characteristicValues"]:
+            response_characteristics = requests.get(url_characteristics, timeout = 10)
+            if response_characteristics.status_code == 200:
+                data_characteristics = response_characteristics.json()
+                for thing in data_characteristics["characteristicValues"]:
                     if thing["shortname"] == "MNW" or thing["shortname"] == "MTnw":
-                        mnw = thing["value"]
+                        mean_low_water = thing["value"]
                     if thing["shortname"] == "MHW" or thing["shortname"] == "MThw":
-                        mhw = thing["value"]
+                        mean_high_water = thing["value"]
             else:
-                print(f"Fehler bei Station im Durchlauf zu MNW und MHW {name }Statuscode {response_mnw_mhw.status_code}")
+                print(f"Fehler bei Station im Durchlauf zu MNW und MHW {name }Statuscode {response_characteristics.status_code}")
                               
         except Exception as e:
             print(f"Fehler bei {e}")
@@ -43,8 +43,8 @@ def seed_stations():
         save_station(
             uuid,
             name,
-            mnw,
-            mhw,
+            mean_low_water,
+            mean_high_water,
             col,
             row,
             is_hotspot

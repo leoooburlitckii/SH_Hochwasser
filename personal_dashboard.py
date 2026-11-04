@@ -1,12 +1,12 @@
 from src.BASE_MAP import BASE_MAP
 import json
-from src.database import get_latest_measurment
+from src.database import get_latest_measurement
 from src.colors_for_terminal import YELLOW, WHITE, RED, GREEN
 from config_manager import configure_stations, CONFIG_FILE
 import os
 import time
 
-# hat der user json datei? wenn nicht starte config_manager.py
+# Hat der User eine json Datei? Wenn nicht, starte config_manager.py
 def get_user_stations():
     if not os.path.exists(CONFIG_FILE):
         print("Keine user.config.json gefunden.")
@@ -15,7 +15,7 @@ def get_user_stations():
 
         configure_stations()
 
-        #Falls Konfigurierung sofort abgebrochen wurde
+        # Falls die Konfigurierung sofort abgebrochen wurde
         if not os.path.exists(CONFIG_FILE):
             print("\n Es wurde keine Konfiguration erstellt. Abbruch.")
             return None
@@ -29,7 +29,7 @@ def print_personal_dashboard():
     if not user_stations:
         return
 
-    #Terminal leeren
+    # Terminal leeren
     print("\033[2J\033[3J\033[H", end="")
     personal_map = BASE_MAP.copy()
 
@@ -57,26 +57,26 @@ def print_personal_dashboard():
     print("-" * 78)
     
     for station in user_stations:
-        daten = get_latest_measurment(station["uuid"])
+        data = get_latest_measurement(station["uuid"])
         
-        wert = daten['wert']
-        zeit_str = daten['zeit']
-        mnw = daten['mnw']
-        mhw = daten['mhw']
+        value = data['value']
+        timestamp_str = data['timestamp']
+        mean_low_water = data['mean_low_water']
+        mean_high_water = data['mean_high_water']
         
-        farbcode = GREEN
+        color_code = GREEN
         
-        if wert != "--" and mnw != "--" and mhw != "--":
-            if wert > mhw:
-                farbcode = RED 
-            elif wert < mnw:
-                farbcode = YELLOW 
+        if value != "--" and mean_low_water != "--" and mean_high_water != "--":
+            if value > mean_high_water:
+                color_code = RED 
+            elif value < mean_low_water:
+                color_code = YELLOW 
         
-        wert_text = f"{wert:>4} cm    "
+        value_text = f"{value:>4} cm    "
                
-        wert_str = f"{farbcode}{wert_text}{WHITE}"
+        value_str = f"{color_code}{value_text}{WHITE}"
         
-        print(f"{station['symbol']:<4}   | {station['name']:<24} | {wert_str} | {zeit_str}")
+        print(f"{station['symbol']:<4}   | {station['name']:<24} | {value_str} | {timestamp_str}")
 
 if __name__  == "__main__":
     print_personal_dashboard()
