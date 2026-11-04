@@ -15,6 +15,7 @@ services:
   worker:
     build: . 
     restart: always
+    container_name: hochwasser-worker
     depends_on:
       - db 
     env_file:

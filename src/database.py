@@ -106,12 +106,18 @@ def save_measurements_batch(station_uuid: str, measurements: list) -> int:
             "zeitstempel": m["zeitstempel"]
         })
 
+    # PostgreSQL driver allows max 65535 parameters per query.
+    # Each row uses 3 parameters, so we insert in chunks of 5000 rows.
+    chunk_size = 5000
+
     with SessionLocal() as session:
-        stmt = insert(Messung).values(rows)
-        stmt = stmt.on_conflict_do_nothing(
-            constraint = "uq_station_zeit"
-        )
-        session.execute(stmt)
+        for start in range(0, len(rows), chunk_size):
+            chunk = rows[start:start + chunk_size]
+            stmt = insert(Messung).values(chunk)
+            stmt = stmt.on_conflict_do_nothing(
+                constraint = "uq_station_zeit"
+            )
+            session.execute(stmt)
         session.commit()
 
     return len(rows)
