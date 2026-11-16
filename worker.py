@@ -15,7 +15,6 @@ def fetch_and_store():
 
         try:
             response = requests.get(url, timeout=10)
-            response.raise_for_status()
 
             measurements = response.json()
             valid_measurements = []
@@ -42,7 +41,7 @@ def fetch_and_store():
         except requests.RequestException as e:
             print(f"Netzwerkfehler bei {name}: {e}")
         except Exception as e:
-            print(f"Fehler bei {name}: {e}")
+            print(f"Fehler bei {name}: {e}") 
 
 if __name__ == "__main__":
     init_db()
