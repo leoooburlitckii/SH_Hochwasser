@@ -15,21 +15,23 @@ def fetch_and_store():
 
         try:
             response = requests.get(url, timeout=10)
+            response.raise_for_status()
 
-            measurements = response.json()
+            measurements = response.json() 
             valid_measurements = []
 
             for measurement in measurements:
                 try:
                     if "value" not in measurement or "timestamp" not in measurement:
                         continue
-
+                    if measurement.get("value") is None or "timestamp" not in measurement:
+                        continue
                     parsed_datetime = datetime.fromisoformat(measurement["timestamp"])
                     valid_measurements.append({
                         "value": measurement["value"],
                         "timestamp": parsed_datetime
                     })
-                except (ValueError, KeyError):
+                except (ValueError, KeyError, TypeError):
                     continue
 
             if valid_measurements:
