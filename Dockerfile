@@ -11,4 +11,4 @@ RUN uv sync --frozen --no-install-project
 
 COPY . .
 
-CMD ["uv", "run", "worker.py"]
+CMD ["uv", "run", "python", "-m", "src.worker"]

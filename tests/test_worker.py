@@ -2,7 +2,7 @@ from unittest.mock import Mock, patch
 
 import requests
 
-import worker
+import src.worker as worker
 
 class FakeStation:
     def __init__(self, uuid: str, name: str):
@@ -19,9 +19,9 @@ def make_response(data):
     return response
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_valid_measurements_are_saved(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response(
@@ -36,9 +36,9 @@ def test_valid_measurements_are_saved(stations_mock, get_mock, save_mock):
     assert measurements[0]["timestamp"].year == 2026
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_measurement_without_value_is_skipped(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response([
@@ -53,9 +53,9 @@ def test_measurement_without_value_is_skipped(stations_mock, get_mock, save_mock
     assert measurements[0]["value"] == 130
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_measurement_without_timestamp_is_skipped(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response([
@@ -70,9 +70,9 @@ def test_measurement_without_timestamp_is_skipped(stations_mock, get_mock, save_
     assert measurements[0]["value"] == 130
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_measurement_with_wrong_timestamp_is_skipped(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response([
@@ -87,9 +87,9 @@ def test_measurement_with_wrong_timestamp_is_skipped(stations_mock, get_mock, sa
     assert measurements[0]["value"] == 130
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_measurement_with_null_timestamp_is_skipped(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response([
@@ -105,9 +105,9 @@ def test_measurement_with_null_timestamp_is_skipped(stations_mock, get_mock, sav
     assert measurements[0]["value"] == 130
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_network_error_does_not_stop_other_stations(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A, STATION_B]
     get_mock.side_effect = [
@@ -121,9 +121,9 @@ def test_network_error_does_not_stop_other_stations(stations_mock, get_mock, sav
     assert save_mock.call_args.args[0] == "uuid-b"
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_http_error_does_not_stop_other_stations(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A, STATION_B]
 
@@ -141,9 +141,9 @@ def test_http_error_does_not_stop_other_stations(stations_mock, get_mock, save_m
     assert get_mock.call_count == 2
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_database_error_does_not_stop_other_stations(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A, STATION_B]
     get_mock.return_value = make_response(
@@ -159,9 +159,9 @@ def test_database_error_does_not_stop_other_stations(stations_mock, get_mock, sa
     assert save_mock.call_args.args[0] == "uuid-b"
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_empty_api_response_saves_nothing(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response([])  # API liefert eine leere Liste
@@ -171,9 +171,9 @@ def test_empty_api_response_saves_nothing(stations_mock, get_mock, save_mock):
     save_mock.assert_not_called()
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_request_uses_correct_url_and_timeout(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response([])
@@ -187,9 +187,9 @@ def test_request_uses_correct_url_and_timeout(stations_mock, get_mock, save_mock
     get_mock.assert_called_once_with(expected_url, timeout=10)
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_no_stations_makes_no_requests(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [] 
 
@@ -199,9 +199,9 @@ def test_no_stations_makes_no_requests(stations_mock, get_mock, save_mock):
     save_mock.assert_not_called()
 
 
-@patch("worker.save_measurements_batch")
-@patch("worker.requests.get")
-@patch("worker.get_all_stations")
+@patch("src.worker.save_measurements_batch")
+@patch("src.worker.requests.get")
+@patch("src.worker.get_all_stations")
 def test_measurement_with_null_value_is_skipped(stations_mock, get_mock, save_mock):
     stations_mock.return_value = [STATION_A]
     get_mock.return_value = make_response([

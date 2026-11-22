@@ -1,6 +1,6 @@
 import os
 
-# Fake DB settings so that "import settings" works without a .env file.
+# Fake DB settings so that "import src.settings" works without a .env file.
 # The engine is created lazily, so no real connection is opened during tests.
 os.environ.setdefault("DB_HOST", "localhost")
 os.environ.setdefault("DB_PORT", "5432")

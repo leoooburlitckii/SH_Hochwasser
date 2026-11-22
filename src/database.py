@@ -1,4 +1,4 @@
-from settings import settings
+from src.settings import settings
 from sqlalchemy import create_engine, String, Float, Integer, BigInteger, Boolean, select, ForeignKey, UniqueConstraint, DateTime
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.orm import relationship
@@ -49,7 +49,7 @@ class User(Base):
     station_name: Mapped[str] = mapped_column(String, nullable=False)
     threshold: Mapped[str] = mapped_column(String, nullable=False)
 
-def init_db():
+def init_db(): 
     Base.metadata.create_all(bind=engine)
 
 def save_station(

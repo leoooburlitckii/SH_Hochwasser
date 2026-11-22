@@ -2,7 +2,7 @@ from src.BASE_MAP import BASE_MAP
 import json
 from src.database import get_latest_measurement
 from src.colors_for_terminal import YELLOW, WHITE, RED, GREEN
-from config_manager import configure_stations, CONFIG_FILE
+from src.config_manager import configure_stations, CONFIG_FILE
 import os
 import time
 
